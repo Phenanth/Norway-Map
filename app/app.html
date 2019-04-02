@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+		<meta charset="utf-8">
+
+		<title>GOOGLE-MAP-CIRCLE-TEST</title>
+
+		<!-- 定义整个页面的布局,不引入将看不到Google Map -->
+		<link href="css/map.css" rel="stylesheet">
+
+	</head>
+
+	<body>
+
+		<div id="container"></div>
+		<div id="cnt-charts"></div>
+
+		<!-- 显示的数据 -->
+		<script src="data/mapdata.js"></script>
+		
+		<!-- Google地图依赖项 -->
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9e2xW2bf6RKGg-PiYeBBMnh9Ic4NiOts&callback=initMap"></script>
+
+		<!-- Charts初始化依赖项 -->
+		<script src="js/charts/jquery-3.2.1.js"></script>
+		<script src="js/charts/highcharts.js"></script>
+		<script src="js/charts/infobox.js"></script>
+
+		<!-- 不懂这两句话的意义 -->
+		<!-- <script src="js/unknown/proj4.js"></script>
+		<script src="js/unknown/exporting.js"></script> -->
+
+		<!-- 整个页面初始化的脚本 -->
+		<script src="js/core.js"></script>
+	
+	</body>
+
+</html>

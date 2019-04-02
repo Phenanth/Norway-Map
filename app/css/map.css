@@ -1,0 +1,138 @@
+@charset "UTF-8";
+
+body {
+    font-family: "ff-din-web-1", "ff-din-web-2", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 150%;
+    background: #fff;
+    overflow-x: hidden;
+    color: #0060a9;
+}
+
+html,body {
+	height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: row;
+}
+
+#container {
+    flex: 1;
+    padding: 0 10px;
+    border-right: 1px dotted #ccc;
+}
+
+#cnt-charts {
+    flex:1;
+    padding: 0 10px;
+}
+
+.menu {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    background: rgba(60,60,60,0.8);
+    color: #fff;
+    font-size: 12px;
+    min-width: 150px;
+    text-align: center;
+}
+
+.menu .type {
+    margin: 0;
+    border-top: 1px solid #eee;
+    padding: 5px 10px;
+}
+
+.menu .type:hover {
+    background: #ff6600;
+    cursor: pointer;
+}
+
+
+.infobox {
+    display: block;
+    position: relative;
+    left: -50%;
+    top: -10px;
+    padding-bottom: 10px; 
+    transition: all ease 2s;
+    min-width: 200px;
+}
+
+.infobox .title {
+    background: #006699;
+    padding: 5px 10px;
+    text-align: center;
+    margin: 0;
+    color: #fff;
+}
+
+.infobox .infocnt {
+    border: 1px solid #006699;
+    border-radius: 3px;
+    background: #fff;
+    opacity: 0.8;
+}
+
+
+.infobox .cnt {
+    /*margin: 0 5px 0 5px;*/
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+}
+
+.infobox .cnt  span {
+    
+    padding: 5px;
+    margin: 0px 1px 1px 0;
+    text-align: center;
+}
+
+.v-tl {
+    width: 70px;
+    background: #666;
+    color: #fff;
+}
+
+.v-cnt {
+    flex:1;
+    background: #fff
+}
+
+
+.infobox .marker:before, .infobox .marker:after {
+    content:'';
+    display: block;
+    position: absolute;
+    box-sizing: content-box;
+    width: 0px;
+    height: 0px;
+    bottom: -4px;
+    right:calc( 50% - 8px );
+    border-bottom:8px solid transparent;
+    border-left:8px solid transparent;
+    border-right:8px solid transparent;
+}
+
+.infobox .marker:before {
+    border-top:8px solid #FFFFFF;
+    z-index: 1000000;
+}
+
+.infobox .marker:after {
+    border-top:8px solid #006699;
+    bottom: -5px;
+    z-index: 999999;
+    opacity: 0.8;
+}
