@@ -18,7 +18,29 @@ html,body {
 
 body {
     display: flex;
+    flex-direction: column;
+}
+
+.header {
+    padding-left: 20px;
+    padding-right: 20px;
+    flex: 1;
+    background-color: black;
+    color: white;
+    line-height: 50px;
+}
+
+.line-one, .line-two {
+    display: flex;
     flex-direction: row;
+}
+
+.line-one {
+    flex: 8;
+}
+
+.line-two {
+    flex: 5;
 }
 
 #container {
@@ -30,6 +52,18 @@ body {
 #cnt-charts {
     flex:1;
     padding: 0 10px;
+}
+
+#cnt-date-charts {
+    flex: 1;
+    padding: 0 10px;
+    /*background-color: #FFB69F;*/
+}
+
+#cnt-r {
+    flex: 1;
+    padding: 0 10px;
+    background-color: #1ACCAE;
 }
 
 .menu {
