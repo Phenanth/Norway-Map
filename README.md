@@ -118,14 +118,9 @@ mysql> SELECT * FROM NORWAY_DATA LIMIT 5;
 
 #### 有待解决的问题
 
-- Window 2根据最早的开始年份动态改变x轴始点
-- Window 3没有的采集点也需要出现在图表中
-- 修改`core.js`，取消使用拆开后的年月日字段的判断语句。
-
-#### 进一步需要完成的需求
-
-- Window 2点击互动效果
-- Windows的点击放大效果
+- [x] Window 2根据最早的开始年份动态改变x轴始点
+- [x] Window 3没有的采集点也需要出现在图表中
+- [x] 修改`core.js`，取消使用拆开后的年月日字段的判断语句。
 
 > Highcharts加了个`startPoint`Window 2就好了耶好快乐噢
 但是想想如果有不存在年份的数据...oh想想就自闭了
@@ -158,3 +153,26 @@ mysql> select site_code, SUM_Q_AVG from site_jova where sample_date="\"25.06.201
 > 感觉切换日期更改其他的窗口的内容是个蛮烦人的事情...
 
 [Highcharts参考网站](https://www.highcharts.com/demo/line-basic)
+
+
+### 190409
+
+#### 今天解决的问题
+
+- [x] Window 1 与 Window 3 根据指定日期进行显示
+- [x] Window 2 所有数据按照指定的地点、机器时间进行正确显示
+
+按照机器时间显示时间真好用.jpg
+
+> 目前系统的不足之处是需要额外定义SITE_NAME和SAMPLE_DATE作为全局变量才能进行网站数据的初始化
+
+#### 问题
+
+google map的`initMap() is not a function`是什么神仙报错啊
+
+
+#### 进一步需要完成的需求
+
+- Window 2点击互动效果
+- Windows的点击放大效果
+
