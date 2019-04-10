@@ -7,34 +7,56 @@ String.prototype.format = function() {
     return formatted;
 };
 
+// 清除Google Map上的Markers
+google.maps.Map.prototype.clearMarkers = function() {
+    for(var i=0; i < markersArray.length; i++){
+        markersArray[i].setMap(null);
+    }
+    // markersArray = new Array();
+    // bounds  = new google.maps.LatLngBounds();
+};
 
-var mapdata = []
-var map
-
-var DATE = "30.04.2012"
-var SITE_NAME = "TIME"
-
-
-$(init) 
-
-function init() {
-    data = initData()
-    initMap()
-    initDateChart(data.date, data.chart2data, data.dateStart)
-    initBarChart(data.area, data.chartdata)
+// 根据字符串计算对应的机器时间
+function calMachineTime(str) {
+    return Date.UTC(Number(str.substr(6, 10)), Number(str.substr(3, 5)) - 1, Number(str.substr(0, 2)))
 }
 
 
+var mapdata = []
+var map
+var bounds
+var markersArray = []
 
+// 网站初始化用的数据
+// 后期根据在窗口中的选择会被更改为其他的值
+var DATE = "30.04.2012"
+var SITE_NAME = "TIME"
+ // 如果是仅按照年份选取数据的话，这句话在Highcharts里才有用。
+var dateStart = Number(2012)
+
+date = []
+area = []
+
+chartdata = []
+chart2data = []
+
+
+
+$(init)
+
+function init() {
+    initData()
+    initMap()
+    initDateChart()
+    initBarChart()
+}
+
+
+// Initialize the web site
 function initData() {
 
-    date = []
-    chart2data = []
-
-    area = []
-    chartdata = []
-
-
+    bounds  = new google.maps.LatLngBounds();
+    map = new google.maps.Map(document.getElementById('container'), { mapTypeId: 'terrain' });
 
     $.each(datamap, function () {
 
@@ -93,7 +115,7 @@ function initData() {
 
         // 对日期数据按照机器时间从早到晚排序
         date.sort(function(a, b) {
-            return Date.UTC(Number(a.substr(6, 9)), Number(a.substr(3, 4)), Number(a.substr(0, 1))) - Date.UTC(Number(b.substr(6, 9)), Number(b.substr(3, 4)), Number(b.substr(0, 1)))
+            return  calMachineTime(a) - calMachineTime(b)
         })
 
 
@@ -133,36 +155,123 @@ function initData() {
             }
         }
 
-
-
     });
 
-    // console.log(area)
-    // console.log(date)
-    // console.log(chartdata)
-    // console.log(chart2data[0])
+    // console.log('initData:', area)
+    // console.log('initData:', date)
+    // console.log('initData:', chartdata)
+    // console.log('initData:', chart2data[0])
 
 
-    // 将全局变量改为第一个地区与最早的日期
-    // 需要注意这里，因为window 1是根据这里初始化的
-    // 但window 2和window 3用的是用户指定的初始数据
-    DATE = date[0]
-    SITE_NAME = area[0]
+}
 
-    var data = {
-        date: date,
-        area: area,
-        chartdata: chartdata,
-        chart2data: chart2data,
-        dateStart: Number(date[0].substr(6, 9))
-    }
+// When chose a new site from window 3, init the data
+function initWindow2Data() {
 
-    return data
+    chart2data = []
+
+    $.each(datamap, function () {
+
+        // Window 2
+        if (this.SITE_NAME == SITE_NAME) {
+            var flag2 = 0
+
+            for (var i = 0; i < date.length; i++) {
+                if (date[i] == this.SAMPLE_DATE) {
+                    flag2 = 0
+                    var ret2 = Number(this.TOTAL)
+                    for (var i = 0; i < chart2data.length; i++) {
+                        if (chart2data[i]["name"] == this.ENDPOINT) {
+                            var obj_data = []
+                            obj_data.push(Date.UTC(Number(this.SAMPLE_YEAR), Number(this.SAMPLE_MONTH-1), Number(this.SAMPLE_DAY)))
+                            obj_data.push(ret2)
+                            chart2data[i]["data"].push(obj_data)
+                            flag2 = 1
+                            break
+                        }
+                    }
+                    if (flag2 == 0) {
+                        var obj = {
+                            name: this.ENDPOINT,
+                            data: []
+                        }
+                        var obj_data = []
+                        obj_data.push(Date.UTC(Number(this.SAMPLE_YEAR), Number(this.SAMPLE_MONTH-1), Number(this.SAMPLE_DAY)))
+                        obj_data.push(ret2)
+                        obj.data.push(obj_data)
+                        chart2data.push(obj)
+                    }
+                    break
+                }
+            }
+
+        }
+
+        // Window 2 X轴数据根据日期排序
+        for (i = 0; i < chart2data.length; i++) {
+            chart2data[i].data.sort(function(a, b) {
+                return a[0] - b[0]
+            })
+        }
+    })
+
+    // console.log('initWindow2Data:', chart2data[0])
+
+}
+
+// When chose a new date from window 2, init the data
+function initWindow3Data() {
+
+    area = []
+    chartdata = []
+
+    $.each(datamap, function () {
+
+        // Window 3
+        if (this.SAMPLE_DATE == DATE) {
+
+            var flag = 0
+
+            for (var i = 0; i < area.length; i++) {
+                if (area[i] == this.SITE_NAME) {
+                    flag = 1
+                    break
+                }
+            }
+
+            if (flag == 0) {
+                    area.push(this.SITE_NAME)
+            }
+
+            ret = Number(this.SUM);
+
+            flag = 0
+            for (i = 0; i < chartdata.length; i++) {
+                if (chartdata[i]["name"] == this.ENDPOINT) {
+                    chartdata[i]["data"].push(ret)
+                    flag = 1
+                    break
+                }
+            }
+            if (flag == 0) {
+                var obj = {
+                    name: this.ENDPOINT,
+                    data: []
+                }
+                obj.data.push(ret)
+                chartdata.push(obj)
+            }
+        }
+
+    })
+
+    // console.log('initWindow3Data:', area)
+    // console.log('initWindow3Data:', chartdata)
 
 }
 
 // Window 3
-function initBarChart(area, chartdata) {
+function initBarChart() {
 
     Highcharts.chart('cnt-charts', {
         chart: {
@@ -199,6 +308,13 @@ function initBarChart(area, chartdata) {
                                 if (this.SITE_NAME === e.point.category) {
                                     map.setCenter({lat: Number(this.lat), lng: Number(this.lon)});
                                     map.setZoom(12);
+
+                                    // 点击某地刷新Window 2数据
+                                    SITE_NAME = this.SITE_NAME
+                                    initWindow2Data()
+                                    initDateChart()
+                                    initMap()
+
                                 }
                             })
                             
@@ -243,7 +359,7 @@ function initBarChart(area, chartdata) {
 }
 
 // Window 2
-function initDateChart(date, chart2data, dateStart) {
+function initDateChart() {
 
     Highcharts.chart('cnt-date-charts', {
         title: {
@@ -277,6 +393,22 @@ function initDateChart(date, chart2data, dateStart) {
                 label: {
                     connectorAllowed: false
                 },
+                point: {
+                    events: {
+                        click: function(e) {
+                            $.each(date, function () {
+                                var machineTime = calMachineTime(this)
+                                if (machineTime == e.point.category) {
+                                    // 点击某日更换 Window 3数据
+                                    DATE = this
+                                    initWindow3Data()
+                                    initBarChart()
+                                    initMap()
+                                }
+                            })
+                        }
+                    }
+                },
                 pointStart: dateStart
             },
         },
@@ -288,8 +420,6 @@ function initDateChart(date, chart2data, dateStart) {
 // Google Map & Markers
 function initMap() {
 
-    bounds  = new google.maps.LatLngBounds();
-    map = new google.maps.Map(document.getElementById('container'), { mapTypeId: 'terrain' });
 
     // 修正演示数据
     $.each(datamap, function () {
@@ -300,6 +430,16 @@ function initMap() {
             
         }
     });
+
+    // 清空Marker 用于点击事件后的初始化
+    // $.each(mapdata, function () {
+    //     this.marker = null
+    // })
+
+
+    map.clearMarkers()
+
+    // console.log('Before InitMap: ', markersArray, bounds)
 
     // 为每个数据采集点设置Marker
     $.each(mapdata, function () {
@@ -326,7 +466,9 @@ function initMap() {
             zIndex: Math.round(lat * -100000) << 5
         });
 
-        this.marker = marker;
+        // this.marker = marker;
+        markersArray.push(marker)
+        google.maps.event.addListener(marker, "click", function(){})
 
         // Marker的鼠标悬浮窗口信息定义
         var infoHTML = '<div class="infobox"><div class="infocnt"><div class="title">{0}</div><div class="cnt"><span class="v-tl">CAMPAIGN</span><span class="v-cnt">{1}</span></div><div class="cnt"><span class="v-tl">COUNTRY</span><span class="v-cnt">{2}</span></div><div class="cnt"><span class="v-tl">ENDPOINT</span><span class="v-cnt">{3}</span></div><div class="cnt"><span class="v-tl">SUM</span><span class="v-cnt">{4}</span></div><div class="cnt"><span class="v-tl">TOTAL</span><span class="v-cnt">{5}</span></div></div><div class="marker"></div></div>';
@@ -354,5 +496,7 @@ function initMap() {
 
     map.fitBounds(bounds);     
     map.panToBounds(bounds);
+
+    // console.log('After InitMap: ', markersArray, bounds)
 
 }
